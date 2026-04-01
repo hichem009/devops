@@ -1,0 +1,7 @@
+.git
+.gitignore
+*.md
+.mvn/
+mvnw
+mvnw.cmd
+target/*.jar.original
