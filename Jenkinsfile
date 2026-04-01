@@ -5,46 +5,30 @@ pipeline {
         DOCKER_IMAGE = 'gestion-produits'
         DOCKER_TAG = "${BUILD_NUMBER}"
     }
+
     tools {
         maven 'Maven-3.9.0'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build & Test (with coverage)') {
+        stage('Build & Test') {
             steps {
                 sh 'mvn clean verify'
             }
         }
 
-        stage('Package') {
-            steps {
-                sh 'mvn package -DskipTests'
-            }
-        }
-
-        stage('Build') {
-             steps {
-                 sh 'mvn clean package -DskipTests'
-             }
-        }
-
-        stage('Test') {
-              steps {
-                 sh 'mvn test'
-              }
-        }
-
         stage('Docker Build') {
-              steps {
-                  sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                  sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-              }
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+            }
         }
     }
 
@@ -53,7 +37,7 @@ pipeline {
             echo 'Build SUCCESS! Coverage ≥ 80%'
         }
         failure {
-            echo 'Build FAILED! Test coverage is below 80%'
+            echo 'Build FAILED!'
         }
     }
 }
